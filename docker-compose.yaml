@@ -1,0 +1,47 @@
+# Note: This Docker Compose file serves for development purposes, alongside dev.Dockerfile
+# Eliminate/rename it if necessary for prod
+services:
+  server:
+    environment:
+      SRV_HOST: "0.0.0.0" # NOTE: this is very important for containers, as setting to localhost sets the listen address to only be within the container, whereas with this explicit notation (or by omitting the host completely in the listen address in main.go) will actually make the container listen to the hosting machine
+    build: # As dockerfile is named we specify it
+      context: .
+      dockerfile: dev.Dockerfile
+    # restart: always # Always restart in case of failure
+    ports:
+      - 7777:7777 # TODO: do read those from env vars
+    # Put in a private network
+    # networks:
+    #   - mynet
+    # Make sure to init storage before launching server
+    depends_on:
+      storage:
+        condition: service_healthy # Wait for pg to be ready
+
+  storage:
+    image: postgres:alpine # lightweight postgres image
+    # restart: always
+    environment:
+      POSTGRES_USER: postgres
+      # note: could use ${POSTGRES_USER} as val if pre-defined
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: database
+    # volumes is optional, if want to persist data
+    # volumes:
+    #   - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    # networks:
+    #   - mynet
+    # Optional but helpful healthcheck:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+# networks:
+#   mynet:
+#     name: shared-dev-network

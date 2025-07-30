@@ -1,0 +1,4 @@
+config/*.env
+config/*.yaml
+bin/*
+dev.log
