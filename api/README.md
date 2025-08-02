@@ -1,5 +1,7 @@
 # The API package
 
+IMPORTANT: this README is obsolete, as the router isn't abstracted anymore and the Echo package is used directly. While updates have been made in the parent repo, they have not (and likely will not) made their way here.
+
 The api package is responsible for defining and implementing the API requests a client can make. It is designed to be modular and flexible by decoupling the functions and methods that need to be implemented from their actual implementation. Put simply, it defines structs and interfaces that contain the various methods that HTTP routers will need to implement. As such, any router package can be chosen for the implementation (e.g. Fiber, Echo, Gin, etc...), and the router to be activated when the server is started will be decided through the configuration files and/or environmental variables.
 
 ## The api.go file
